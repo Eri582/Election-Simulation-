@@ -1,248 +1,233 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import time
 from datetime import datetime, timedelta
 
-st.set_page_config(page_title="Grand Federal Simulation Engine", layout="wide")
-st.title("🦅 The Grand Federal Simulation Engine")
+st.set_page_config(page_title="Ultra-Realistic Political Simulator", layout="wide")
+st.title("🏛️ The Grand Constitutional Strategy & Office Simulation Engine")
 
-# ==========================================
-# 1. LIVE RECURRING DATA ARCHITECTURE (12:00 AM Sync)
-# ==========================================
+# ==========================================================
+# 1. THE AUTOMATED 12:00 AM POLLING & APPROVAL ENGINE
+# ==========================================================
 @st.cache_data(ttl=86400)
-def fetch_real_world_macro_data():
-    # Real-time baseline data framework for all 50 states
-    state_profiles = {
-        "Alabama": {"EV": 9, "Lean": -15.0, "Incumbent_Limit": 2, "Counties": ["Jefferson", "Mobile", "Madison"]},
-        "California": {"EV": 54, "Lean": 22.0, "Incumbent_Limit": 2, "Counties": ["Los Angeles", "San Diego", "Orange"]},
-        "Florida": {"EV": 30, "Lean": -4.0, "Incumbent_Limit": 2, "Counties": ["Miami-Dade", "Broward", "Palm Beach"]},
-        "Georgia": {"EV": 16, "Lean": -1.1, "Incumbent_Limit": 2, "Counties": ["Fulton", "Gwinnett", "Cobb"]},
-        "New York": {"EV": 28, "Lean": 20.0, "Incumbent_Limit": 0, "Counties": ["Kings", "Queens", "New York"]},
-        "Texas": {"EV": 40, "Lean": -5.0, "Incumbent_Limit": 0, "Counties": ["Harris", "Dallas", "Tarrant"]},
-        "Wisconsin": {"EV": 10, "Lean": -0.2, "Incumbent_Limit": 0, "Counties": ["Milwaukee", "Dane", "Waukesha"]}
-    }
-    # Dynamic fallback generation to ensure all 50 states load seamlessly
-    for s in ["Alaska", "Arizona", "Arkansas", "Colorado", "Connecticut", "Delaware", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wyoming"]:
-        if s not in state_profiles:
-            state_profiles[s] = {"EV": 6, "Lean": 0.0, "Incumbent_Limit": 2, "Counties": ["Metro County A", "Rural District B"]}
-            
-    return state_profiles, datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+def update_daily_approval_and_polls(day_seed):
+    # Simulates shifting public mood and baseline approvals precisely at midnight daily
+    np.random.seed(day_seed)
+    macro_economic_shift = np.random.normal(0, 1.5)
+    voter_sentiment_vibe = np.random.normal(0, 2.0)
+    return macro_economic_shift, voter_sentiment_vibe
 
-state_engine, sync_time = fetch_real_world_macro_data()
+current_date_str = datetime.now().strftime("%Y-%m-%d")
+day_seed = datetime.now().day
+macro_shift, voter_vibe = update_daily_approval_and_polls(day_seed)
 
-# Dynamic 12:00 AM Approval Calculation
-if "daily_approval_index" not in st.session_state:
-    np.random.seed(datetime.now().day)
-    st.session_state.daily_approval_index = float(np.random.normal(48.5, 2.1))
+st.caption(f"🔄 **Live Server Clock:** Sync Complete for {current_date_str} | 12:00 AM Polling & Baseline Approvals Generated.")
 
-st.caption(f"🛡️ Constitutional System Online | Approval Tracker Sync: {st.session_state.daily_approval_index:.2f}% | Refresh: 12:00 AM ({sync_time})")
+# Initialize Persistent Session Data for Long-term Real-Time Tracking
+if "registration_submitted" not in st.session_state:
+    st.session_state.registration_submitted = False
+if "campaign_funds" not in st.session_state:
+    st.session_state.campaign_funds = 50000.0
+if "approval_rating" not in st.session_state:
+    st.session_state.approval_rating = 50.0
+if "staff_count" not in st.session_state:
+    st.session_state.staff_count = 0
+if "is_eligible" not in st.session_state:
+    st.session_state.is_eligible = True
+if "game_start_time" not in st.session_state:
+    st.session_state.game_start_time = datetime.now()
 
-# ==========================================
-# 2. CHRONOLOGICAL CALENDAR ENGINE (24-Hour Real Time)
-# ==========================================
-if "sim_start_time" not in st.session_state:
-    st.session_state.sim_start_time = datetime.now()
-    st.session_state.current_term_count = 1
-    st.session_state.cash_pool = 50000.0
-    st.session_state.staff_multiplier = 1.0
-    st.session_state.game_phase = "Declaration"  # Declaration -> Primary -> General -> Governance -> Game Over
-    st.session_state.has_dropped_out = False
-    st.session_state.active_crises = []
+# Calculate actual elapsed real time (1 real day = 24 hours)
+elapsed_time = datetime.now() - st.session_state.game_start_time
+game_day = elapsed_time.days + 1  # Starts at Day 1
 
-# Calculate exact days elapsed in real-world seconds/hours
-elapsed_days = (datetime.now() - st.session_state.sim_start_time).days + 1
-
-# Hardwired Real-World Timeline Transitions
-if st.session_state.has_dropped_out:
-    st.session_state.game_phase = "Game Over"
-elif elapsed_days <= 14:
-    st.session_state.game_phase = "Declaration"
-elif elapsed_days <= 21:
-    st.session_state.game_phase = "Primary"
-elif elapsed_days <= 35:
-    st.session_state.game_phase = "General"
-elif elapsed_days <= 65:
-    st.session_state.game_phase = "Governance"
+# Game Phase Mapping based on Exact Real-World Time Framework:
+# Days 1-14 (2 wks): Announcement/Candidacy | Days 15-21 (1 wk): Primaries | Days 22-35 (2 wks): General | Days 36-65 (1 mo): Governance
+if game_day <= 14:
+    current_phase = "Announcement & Declaration Window"
+elif game_day <= 21:
+    current_phase = "Primary Election Phase"
+elif game_day <= 35:
+    current_phase = "General Election Cycle"
+elif game_day <= 65:
+    current_phase = "Active Executive Governance Term"
 else:
-    st.session_state.game_phase = "Term End/Re-election"
+    current_phase = "Term Completed / Next Election Cycle Looming"
 
-# Sidebar Diagnostic Hud
-st.sidebar.header("⏱️ Real-Time Calendar Clock")
-st.sidebar.metric("Simulated Day Counter", f"Day {elapsed_days}")
-st.sidebar.metric("Current Core Phase", st.session_state.game_phase)
-st.sidebar.metric("Campaign Account Cash Balance", f"${st.session_state.cash_pool:,.2f}")
+# Sidebar Stats Hud
+st.sidebar.header("🗓️ Campaign Dashboard Clock")
+st.sidebar.metric("Current Real-Time Game Day", f"Day {game_day} / 65")
+st.sidebar.info(f"**Current Status:** {current_phase}")
+st.sidebar.metric("💰 Campaign Chest", f"${st.session_state.campaign_funds:,.2f}")
+st.sidebar.metric("📈 Your Public Approval Rating", f"{st.session_state.approval_rating + voter_vibe:.1f}%")
 
-# ==========================================
-# 3. INTERACTIVE GAMEPLAY PHASE ENGINE
-# ==========================================
+if not st.session_state.is_eligible:
+    st.error("❌ CONSTITUTIONAL BARRIER: You are currently ineligible to run due to term limits or a lost race. Wait for a vacancy.")
+    st.stop()
 
-# --- PHASE A: DECLARATION PERIOD (WEEKS 1 & 2) ---
-if st.session_state.game_phase == "Declaration":
-    st.header("📢 Stage 1: Official Candidacy Declaration")
-    st.info("Under Article II of the US Constitution and local laws, establish your ticket. You have 14 real days to alter your direction or withdraw entirely.")
+# ==========================================================
+# STAGE 1: ANNOUNCEMENT, CANDIDACY & CONSTITUTIONS
+# ==========================================================
+if not st.session_state.registration_submitted:
+    st.header("📋 Stage 1: Candidate Declaration & Legal Review")
+    st.write("According to Article II of the U.S. Constitution (for National Executive) and individual State Constitutions (for state offices), you must clear requirements.")
     
-    col1, col2 = st.columns(2)
-    with col1:
-        player_name = st.text_input("Legal Candidate Name", value="Citizen Leader")
-        player_party = st.selectbox("Party Identification", ["Blue Coalition", "Red Coalition"])
-        target_state = st.selectbox("Select Jurisdiction / State Base", list(state_engine.keys()))
-    with col2:
-        target_office = st.selectbox("Sought Constitutional Office", ["Presidential Race", "U.S. Senate", "U.S. House", "Governor", "State Assembly"])
+    col_reg1, col_reg2 = st.columns(2)
+    with col_reg1:
+        p_name = st.text_input("Candidate Name", value="Statesman")
+        p_office = st.selectbox("Office Sought", ["Presidential Race", "Governor", "U.S. Senate", "U.S. House", "State Senate", "State House"])
+        p_state = st.selectbox("State of Registration", ["Pennsylvania", "Texas", "California", "Florida", "Michigan", "Ohio"])
+        p_party = st.selectbox("Party Line", ["Blue Coalition (Democrat)", "Red Coalition (Republican)"])
         
-    # Contextual VP Unlock under the 12th Amendment
-    chosen_vp = "None"
-    if target_office == "Presidential Race":
-        chosen_vp = st.selectbox("Select Vice Presidential Running Mate", ["Senator Analytics", "Governor Charisma", "Tech Strategist Bot"])
+    with col_reg2:
+        st.subheader("📜 Constitutional Rules Repository")
+        if p_office == "Presidential Race":
+            st.warning("⚠️ **United States Constitution:** Affects the whole country. Requires winning a 270 Electoral Vote majority. 2-term consecutive limit applies. Must pick a Vice President below.")
+            vp_choice = st.selectbox("Select Your VP Running Mate", ["Senator Analytics", "Governor Charisma", "General Executive"])
+        else:
+            st.info(f"🏛️ **{p_state} State Constitution:** Affects your localized district. Plurality vote rules apply. Term parameters subject to local legislative code limits.")
+            vp_choice = "None (State Race)"
 
-    st.subheader("Platform Alignment Matrix")
-    stance = st.radio("Primary Economic Focus Profile:", [
-        "Strict Supply-Side Deregulation (Requires alignment with conservative local state rules)",
-        "Expanded Public Welfare Systems (Subject to progressive structural rules)",
-        "Balanced Pragmatism (Broad national compatibility profiles)"
+    st.subheader("📢 Select Campaign Issue Stance")
+    p_stance = st.radio("Core Campaign Stance:", [
+        "Prioritize Supply-Side Economics & Fiscal Restraint",
+        "Prioritize Welfare Enhancements & Green Infrastructure Investment",
+        "Moderate Compromise Platform"
     ])
 
-    if st.button("🚨 Voluntarily Withdraw / Drop Out of Cycle"):
-        st.session_state.has_dropped_out = True
-        st.warning("You have dropped out. System locked until upcoming election sequence initializes.")
+    if st.button("Submit Official Filing Papers"):
+        st.session_state.p_name = p_name
+        st.session_state.p_office = p_office
+        st.session_state.p_state = p_state
+        st.session_state.p_party = p_party
+        st.session_state.p_vp = vp_choice
+        st.session_state.p_stance = p_stance
+        st.session_state.registration_submitted = True
+        st.success("Filing validated. Entering the tracking environment.")
         st.rerun()
 
-# --- PHASE B: THE PRIMARY SYSTEM & LOGISTICS (WEEK 3) ---
-elif st.session_state.game_phase == "Primary":
-    st.header("🗳️ Stage 2: Active Intra-Party Primaries")
-    st.write("Manage staff allocations, allocate capital, and execute tactical campaign drops.")
-    
-    st.subheader("Campaign Headquarters Operations")
-    col_hq1, col_hq2 = st.columns(2)
-    with col_hq1:
-        staff_tier = st.radio("Hire Strategic Campaign Staffing:", ["Volunteers Only ($0/day)", "Regional Directors ($5,000/day)", "Elite Consultants ($15,000/day)"])
-        fundraise_method = st.selectbox("Fundraising Action Profile", ["Small-Dollar Grassroots Outreaches", "High-Net-Worth Corporate Banquets"])
-        if st.button("⚡ Execute Daily Fundraising Drive"):
-            earned = np.random.uniform(5000, 25000) if "Corporate" in fundraise_method else np.random.uniform(1000, 8000)
-            st.session_state.cash_pool += earned
-            st.success(f"Account credited with: +${earned:,.2f}")
-            st.rerun()
-            
-    with col_hq2:
-        st.subheader("Geographic Ad Strategy Allocation")
-        # County/State targeting separation logic
-        target_areas = state_engine["Georgia"]["Counties"] # Dynamic fallback lookup array
-        selected_target = st.selectbox("Select Target Battleground Sub-Sector:", target_areas)
-        spend_allocation = st.slider("Media Purchasing Budget Allocation ($)", 0.0, st.session_state.cash_pool, 5000.0)
+# ==========================================================
+# STAGE 2: THE ANNOUNCEMENT PERIOD (DAYS 1-14)
+# ==========================================================
+else:
+    # Fetch player details from memory
+    office = st.session_state.p_office
+    state = st.session_state.p_state
+    party = st.session_state.p_party
+
+    if game_day <= 14:
+        st.header("📢 Candidacy Window: Declaration & Initial Footing")
+        st.write("You have stepped into the race. Use this two-week window to gauge public reaction or adjust your focus before primary lock-in.")
         
-        if st.button("📺 Lock In Strategic Ad Blitz"):
-            if st.session_state.cash_pool >= spend_allocation:
-                st.session_state.cash_pool -= spend_allocation
-                st.session_state.daily_approval_index += (spend_allocation / 10000.0)
-                st.success("Ad slots locked. Polling indicators responding.")
+        col_an1, col_an2 = st.columns(2)
+        with col_an1:
+            st.subheader("🛠️ Management Actions")
+            if st.button("🚨 Voluntarily Drop Out of Current Race"):
+                st.session_state.registration_submitted = False
+                st.warning("You dropped out. You can now choose a new race to enter.")
                 st.rerun()
-            else:
-                st.error("Insufficient campaign capital available.")
-
-    st.subheader("🎙️ Primary Stage Debate Platform")
-    if st.button("🎤 Formulate Live Primary Debate Strategy"):
-        outcome = np.random.choice(["Masterful Performance (+4.5% Approval)", "Policy Gaffe (-3.0% Approval)"])
-        st.write(f"Debate Conclusion: **{outcome}**")
-        if "+" in outcome: st.session_state.daily_approval_index += 4.5
-        else: st.session_state.daily_approval_index -= 3.0
-
-# --- PHASE C: THE GENERAL ELECTION (WEEKS 4 & 5) ---
-elif st.session_state.game_phase == "General":
-    st.header("📢 Stage 3: The General Election Circuit")
-    st.metric("Current Projected General Polling Index", f"{st.session_state.daily_approval_index:.2f}%")
-    
-    st.write("Execute final campaign actions. On Day 35, the Monte Carlo Engine will process all data streams.")
-    # Standardised simulation processing interface
-    if elapsed_days == 35 or st.button("📊 Debug Override: Process General Election Outcomes"):
-        st.subheader("🗳️ Decisive Matrix Calculations Computing...")
-        
-        np.random.seed(42)
-        sim_runs = 10000
-        victories = 0
-        for _ in range(sim_runs):
-            system_variance = np.random.normal(0, 3.0)
-            if (st.session_state.daily_approval_index + system_variance) > 50.0:
-                victories += 1
                 
-        victory_pct = (victories / sim_runs) * 100
-        if victory_pct > 50.0:
-            st.success(f"🏆 General Election Finalized! Win Probability: {victory_pct:.1f}%. You have secured office.")
-            st.session_state.game_phase = "Governance"
-        else:
-            st.error(f"📉 Defeat. Win Probability: {victory_pct:.1f}%. Candidate disqualified from further play until upcoming vacancies occur.")
-            st.session_state.game_phase = "Game Over"
-        st.rerun()
+            # Random Challenge Engine (Positively/Negatively alters parameters)
+            st.subheader("⚠️ Campaign Incident Log")
+            np.random.seed(day_seed + 10)
+            challenge_trigger = np.random.choice(["Good Press", "Scandal", "Quiet Day"])
+            if challenge_trigger == "Good Press":
+                st.success("🔥 Positive Turnout Event: A local organization endorsed your filing! Approval rating up +3%.")
+                st.session_state.approval_rating += 0.05
+            elif challenge_trigger == "Scandal":
+                st.error("📉 Opponent Leak: Old comments regarding local tax structures surfaced. Approval rating dropped -4%.")
+                st.session_state.approval_rating -= 0.05
+            else:
+                st.write("Campaign operational lines holding normal metrics today.")
 
-# --- PHASE D: EXECUTIVE GOVERNANCE & CRISIS INTERFACE (WEEKS 6-9) ---
-elif st.session_state.game_phase == "Governance":
-    st.header("💼 Stage 4: Constitutional Governance Mode")
-    st.info("You have assumed office under the provisions of the United States Constitution. Real-time governance requires navigating systemic emergencies and structural economic shifts.")
-    
-    # Initialize Real-time Crises dynamically
-    if not st.session_state.active_crises:
-        st.session_state.active_crises = [np.random.choice([
-            "⚠️ National Supply Chain Contraction & Inflation Surge",
-            "💥 State Constitutional Crisis (Legislative Deadlock)",
-            "🌪️ Category 5 Meteorological Threat & Infrastructure Damage"
-        ])]
+# ==========================================================
+# STAGE 3: RUNNING THE PRIMARY (DAYS 15-21)
+# ==========================================================
+    elif game_day <= 21:
+        st.header("🗳️ The Primary Election Loop & Infrastructure Setup")
+        st.write("You are locked into your party primary. Spend funds wisely to out-hustle internal challengers.")
         
-    st.subheader("🚨 Current Pending Administration Crisis")
-    st.warning(st.session_state.active_crises[0])
-    
-    governance_action = st.radio("Select Official Executive Response Directive:", [
-        "Deploy Emergency Reserves & Executive Directives (Stabilizes Approval | Adds long-term debt)",
-        "Pursue Legislative Compromise & Structural Reforms (Slow resolution | Long-term economic benefit)",
-        "Austerity Measures & Market Self-Correction (Risk of short-term approval drops)"
-    ])
-    
-    if st.button("🏛️ Formally Enact Policy Directive"):
-        if "Deploy Emergency" in governance_action:
-            st.session_state.daily_approval_index += 2.5
-            st.success("Crisis mitigated temporarily via executive authority. Approval metrics rising.")
-        elif "Legislative" in governance_action:
-            st.session_state.daily_approval_index += 0.5
-            st.info("Bipartisan package signed into law. Systemic variables optimizing.")
+        # Fundraising / Staffing Controls
+        c_p1, c_p2 = st.columns(2)
+        with c_p1:
+            st.subheader("💼 Financial Campaign Operations")
+            fund_action = st.radio("Choose Fundraising Strategy:", ["Host High-Plate Private Dinners", "Launch Grassroots Micro-Donation Drive"])
+            if st.button("Execute Fundraiser Session (Takes 24 hrs to repeat)"):
+                added_cash = np.random.uniform(5000, 15000) if "Private" in fund_action else np.random.uniform(2000, 8000)
+                st.session_state.campaign_funds += added_cash
+                st.success(f"Fundraising complete. Deposited: ${added_cash:,.2f}")
+                
+        with c_p2:
+            st.subheader("👥 Operations & Allocations")
+            st.write(f"Active Staff Members: **{st.session_state.staff_count}**")
+            if st.button("Hire Field Directors ($5,000 cost)"):
+                if st.session_state.campaign_funds >= 5000:
+                    st.session_state.campaign_funds -= 5000
+                    st.session_state.staff_count += 1
+                    st.session_state.approval_rating += 1.5
+                else:
+                    st.error("Insufficient funds.")
+
+        st.subheader("🎤 Mandatory Primary Debate Room")
+        st.info("The internal network primary debate is broadcasting live. Answer strategically to lock down the nomination:")
+        debate_response = st.selectbox("How do you address your primary opponent's charge that your platform lacks localized viability?", 
+                                       ["Pivot to national unified party messages", "Counter-attack their legislative attendance history"])
+        if st.button("Log Debate Verdict"):
+            st.success("Debate finalized. Metrics applied to midnight tracking loops.")
+
+# ==========================================================
+# STAGE 4: GENERAL ELECTION CYCLE (DAYS 22-35)
+# ==========================================================
+    elif game_day <= 35:
+        st.header("📢 The General Election Campaign Trail")
+        st.write("The primaries are finalized. It is ticket vs ticket. Target your campaign deployments precisely.")
+        
+        if office == "Presidential Race":
+            target_area = st.text_input("Target State Focus (e.g. Pennsylvania, Michigan, Wisconsin)", value="Pennsylvania")
         else:
-            st.session_state.daily_approval_index -= 4.0
-            st.error("Austerity plan triggered structural protests. Approval metrics declining.")
-        st.session_state.active_crises = [] # Clear crisis array for next cycle
-        st.sidebar.metric("Current Job Approval", f"{st.session_state.daily_approval_index:.2f}%")
-        st.rerun()
+            target_area = st.text_input("Target County Focus for State Operations", value="County Centric")
+            
+        st.write(f"Deploying field assets and advertising spend into: **{target_area}**")
+        
+        # General Election Debate
+        st.subheader("📺 High-Stakes General Election Debate Arena")
+        st.selectbox("Your opponent states your structural economic plan will harm local job growth. What is your response?", 
+                     ["Present data forecasting long-term investment yield surpluses", "Decline to answer directly and highlight previous historical achievements"])
+        if st.button("Submit Response To Moderator"):
+            st.success("Response locked in.")
 
-    # Cabinet Setup Control
-    st.subheader("Executive Cabinet Status Desk")
-    cab1, cab2 = st.columns(2)
-    with cab1:
-        st.selectbox("Secretary of State / Chief Counsel", ["Career Ambassador Bot", "Aligned Legal Scholar"])
-    with cab2:
-        st.selectbox("Secretary of Treasury / Economic Lead", ["Central Bank Liaison", "Industrial Coalition Advisor"])
-
-# --- PHASE E: INCUMBENCY EVALUATION & RE-ELECTION MATRIX ---
-elif st.session_state.game_phase == "Term End/Re-election":
-    st.header("🔄 Stage 5: Incumbency Review & Re-election Verification")
-    
-    # Structural 22nd Amendment and State Constitution Check
-    st.write("Evaluating structural eligibility parameters under the U.S. and State Constitutions...")
-    
-    # Hardcoded limits configuration
-    term_limit_reached = st.session_state.current_term_count >= 2
-    
-    if term_limit_reached:
-        st.error("⛔ Constitutional Term Limit Reached (22nd Amendment / Local State Cap). You are ineligible for re-election.")
-        if st.button("Reset Simulation Loop"):
-            st.session_state.clear()
-            st.rerun()
+# ==========================================================
+# STAGE 5: GOVERNANCE & CRISIS STAGE (DAYS 36-65)
+# ==========================================================
     else:
-        st.success("✅ Eligible for Incumbent Run. Your baseline approval metric will carry over into the new cycle.")
-        if st.button("🚀 Enter Upcoming Primary Cycle"):
-            st.session_state.current_term_count += 1
-            st.session_state.sim_start_time = datetime.now() # Reset calendar clock back to Day 1
-            st.session_state.game_phase = "Declaration"
-            st.rerun()
+        st.header("🦅 Executive Governance Chamber")
+        st.write(f"You have won your respective race and taken the Oath of Office to uphold the Constitution. Welcome to your Term.")
+        
+        # REALISTIC CRISIS AND EMERGENCY CONTROL HUB
+        st.subheader("🚨 Real-Time Emergency Council Room")
+        np.random.seed(day_seed + 100)
+        active_crisis = np.random.choice(["Infrastructure Breakdown", "Economic High-Inflation Wave", "Localized Border/Sovereignty Strain", "Quiet Governance Week"])
+        
+        if active_crisis == "Infrastructure Breakdown":
+            st.error("⚠️ **CRISIS:** A major bridge grid and electrical grid failure has crippled transit lines in your jurisdiction.")
+            choice = st.radio("Action Plan:", ["Allocate EMERGENCY funding reserves to fast-track municipal repairs", "Request federal disaster assistance and deploy localized guardsmen"])
+            if st.button("Execute Crisis Directive"):
+                st.success("Directive logged. Infrastructure stabilization metrics processing.")
+                
+        elif active_crisis == "Economic High-Inflation Wave":
+            st.error("📉 **CRISIS:** Global trade blockages have spiked fuel and commodity indexes. Local prices are soaring.")
+            choice = st.radio("Action Plan:", ["Enact short-term regulatory tax holidays on necessary consumer goods", "Implement strict spending cuts to control localized deficit expansion"])
+            if st.button("Execute Financial Directive"):
+                st.success("Economic emergency adjustment parameters activated.")
+        else:
+            st.success("✨ Safe Horizon: Your departments report smooth standard operations across all operational sectors today.")
 
-# --- PHASE F: TERMINATION SCREEN ---
-elif st.session_state.game_phase == "Game Over":
-    st.header("💀 Simulation Concluded / Seat Vacated")
-    st.error("Your current campaign or administration track has terminated. Under standard rules, you cannot run until a new election cycle starts or an emergency vacancy occurs.")
-    if st.button("🔄 Restart New Simulation Environment"):
-        st.session_state.clear()
-        st.rerun()
+        st.subheader("💼 Long-Term Structural Cabinet")
+        st.selectbox("Appoint / Re-verify Secretary of State", ["Diplomatic Career Officer", "Strategic Coalition Leader"])
+        st.selectbox("Appoint / Re-verify Secretary of the Treasury", ["Central Banking Architect", "Industrial Academic Specialist"])
+        
+        # Re-election eligibility flag
+        st.subheader("🔄 Future Cycle Outlook")
+        if st.button("File Intention Paperwork for Next Re-Election Cycle"):
+            st.info("Paperwork verified against Constitutional guidelines. If you have not exceeded your two-term bound, you will be cleared for the next cycle layout.")
